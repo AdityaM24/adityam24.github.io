@@ -255,7 +255,7 @@
                     <h2>Connect With Me</h2>
                     <p class="contact-description">Follow me on social media and connect professionally</p>
                     <div class="social-links">
-                        <a href="https://www.linkedin.com/in/aditya-mahale-0a311925b" target="_blank"
+                        <a href="https://www.linkedin.com/in/adityam24" target="_blank"
                             class="social-link">
                             <img src="Images/linkidin.png" alt="LinkedIn">
                             <span>LinkedIn</span>
@@ -264,7 +264,7 @@
                             <img src="Images/github.png" alt="GitHub">
                             <span>GitHub</span>
                         </a>
-                        <a href="https://www.instagram.com/adityyaa.24/" target="_blank" class="social-link">
+                        <a href="https://www.instagram.com/adityyaaindeed/" target="_blank" class="social-link">
                             <img src="Images/insta.png" alt="Instagram">
                             <span>Instagram</span>
                         </a>
@@ -326,6 +326,53 @@
                 hamburger.classList.remove('active');
             }
         });
+
+        // Web3Forms: client-side POST handler for contact form
+        (function () {
+            const contactForm = document.querySelector('.contact-form');
+            if (!contactForm) return;
+
+            contactForm.addEventListener('submit', async (e) => {
+                // Prevent default to use fetch POST (provides better feedback)
+                e.preventDefault();
+
+                const submitBtn = contactForm.querySelector('button[type="submit"]');
+                const originalBtnText = submitBtn ? submitBtn.innerHTML : null;
+                if (submitBtn) {
+                    submitBtn.disabled = true;
+                    submitBtn.innerText = 'Sending...';
+                }
+
+                const formData = new FormData(contactForm);
+
+                try {
+                    const resp = await fetch(contactForm.action, {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    // Try parse JSON response from Web3forms
+                    const result = await resp.json().catch(() => null);
+
+                    if (resp.ok && result && result.success) {
+                        // success
+                        alert('Message sent successfully — thank you!');
+                        contactForm.reset();
+                    } else {
+                        // fallback error message
+                        const msg = (result && result.message) ? result.message : (resp.statusText || 'Failed to send message');
+                        alert('Could not send message: ' + msg);
+                    }
+                } catch (err) {
+                    alert('Network error: ' + err.message);
+                } finally {
+                    if (submitBtn) {
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = originalBtnText;
+                    }
+                }
+            });
+        })();
 
         // Prevent horizontal scroll
         document.body.style.overflowX = 'hidden';
